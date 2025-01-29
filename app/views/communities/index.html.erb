@@ -1,0 +1,165 @@
+<header style="background-color: #f3ce00; height: 200px; position: relative;">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <div class="flex lg:flex-1">
+    </div>
+    <div class="flex lg:hidden">
+      <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+        <span class="sr-only">Open main menu</span>
+        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+    <div class="hidden lg:flex lg:gap-x-12">
+      <%= link_to 'Home', root_path, class: "text-sm/6 text-gray-900 no-underline font-semibold" %>
+      <% if user_signed_in? && current_user.community.blank? %>
+        <%= link_to 'Join us', new_community_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+      <% end %>
+      <%= link_to 'All Articles', articles_path, class: "text-sm/6 text-gray-900 no-underline font-semibold" %>
+    </div>
+    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+      <div class="relative">
+              <!-- Trigger Button -->
+              <button 
+                id="menu-button" 
+                class="text-sm font-semibold text-gray-900 focus:outline-none"
+                onclick="toggleMenu()"
+              >
+                My account
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div 
+                id="menu-dropdown" 
+                class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden"
+              >
+                <% if user_signed_in? %>
+                  <!-- Link to Community Show Page -->
+                  <% if current_user.community.present? %>
+                    <%= link_to 'My Profile', community_path(current_user.community), 
+                                class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+                    
+                    <!-- Edit Profile Link -->
+                    <%= link_to 'Edit Profile', edit_community_path(current_user.community), 
+                                class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+
+                    <!-- Delete Profile Link -->
+                    <%= link_to 'Delete Profile', community_path(current_user.community), 
+                                data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+                                class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+                  <% else %>
+                    <%= link_to 'Join us', new_community_path, class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+                  <% end %>
+
+                  <!-- Log out Link -->
+                  <%= link_to 'Log out', destroy_user_session_path, 
+                              data: { turbo_method: :delete }, 
+                              class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+                <% else %>
+                  <!-- Log in Link -->
+                  <%= link_to 'Log in', new_user_session_path, 
+                              class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+                <% end %>
+              </div>
+            </div>
+    </div>
+  </nav>
+
+    
+</header>
+
+<section class="bg-white relative">
+  <div class="absolute left-0" style="margin-top: -120px; padding-left: 70px;">
+  <%= image_tag 'group3.jpg', class: 'rounded-full w-60 h-60 object-cover border-4 border-white', alt: 'Community Photo', sizes: '60x60' %>
+</div>
+
+
+</section>
+
+
+<section class="bg-white">
+
+  <div class="bg-white py-24 md:py-20 lg:py-20">
+  <div class="mx-auto max-w-7xl gap-20 px-6 lg:px-8">
+    <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-3xl font-serif mt-16">Our Community</h2>
+    <p class="mt-6 text-lg/8 text-gray-600 font-serif mb-5">We are an international research community dedicated to social inquiry. 
+By participating in a disciplined, joint inquiry process, which we call Research-in-Action we aim to influence conversations across fields—scholarly and professional—while always centering the everyday experiences of practitioners.</p>
+    
+    <div class="mb-10 flex justify-center">
+      <select id="group-filter" class="filter-dropdown">
+        <option value="all">All Members</option>
+        <option value="Research fellows">Research Fellows</option>
+        <option value="Researchers">Researchers</option>
+        <option value="Faculty & convening">Faculty & Convening</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mx-auto grid max-w-7xl gap-20 px-6 lg:px-8">
+    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3 pl-0">
+      <% @communities.each do |community| %>
+        <li class="community-item" data-group="<%= community.group %>">
+          <% if community.profile_picture.present? %>
+            <img 
+              class="aspect-[3/2] w-full rounded-2xl object-cover" 
+              src="<%= community.profile_picture.url %>" 
+              alt="<%= community.first_name %> <%= community.last_name %>">
+          <% end %>
+          <h3 class="mt-6 text-lg/8 font-semibold text-gray-900"><%= community.first_name %> <%= community.last_name %></h3>
+          <p class="text-base/7 text-gray-600">Group: <%= community.group %></p>
+          <p class="line-clamp-2 text-base/7 text-gray-600 break-words hyphens-auto">
+            <%= community.description %>
+          </p>
+          <ul role="list" class="mt-6 flex gap-x-6">
+            <li>
+              <%= link_to "About #{community.first_name}", community_path(community), class: 'bg-gray-900 text-white no-underline px-3 py-2 rounded-md hover:text-gray-500' %>
+            </li>
+            <% if user_signed_in? && community.user_id == current_user.id %>
+              <li>
+                <%= link_to 'My Profile', community_path(current_user.community), class: 'text-gray-400 hover:text-gray-500' %>
+              </li>
+            <% end %>
+          </ul>
+        </li> <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const filterSelect = document.getElementById("group-filter");
+    const communityItems = document.querySelectorAll(".community-item");
+
+    // Ensure the event listener is set up every time the page is loaded
+    filterSelect.addEventListener("change", function() {
+        const selectedValue = this.value;
+
+        communityItems.forEach(item => {
+            const group = item.getAttribute("data-group");
+
+            if (selectedValue === "all" || group === selectedValue) {
+                item.style.display = "list-item"; // Show the item
+            } else {
+                item.style.display = "none"; // Hide the item
+            }
+        });
+    });
+
+    // Optionally trigger the change event on page load to apply the filter
+    filterSelect.dispatchEvent(new Event('change'));
+});
+
+function toggleMenu() {
+  const menu = document.getElementById('menu-dropdown');
+  if (menu.classList.contains('hidden')) {
+    menu.classList.remove('hidden');
+  } else {
+    menu.classList.add('hidden');
+  }
+}
+
+</script>

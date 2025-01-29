@@ -1,0 +1,50 @@
+<h1>Edit Community Member</h1>
+
+<%= form_with(model: @community, local: true) do |form| %>
+  <% if @community.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@community.errors.count, "error") %> prohibited this community member from being saved:</h2>
+      <ul>
+        <% @community.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :first_name %>
+    <%= form.text_field :first_name, required: true, value: @community.first_name %>
+  </div>
+
+  <div>
+    <%= form.label :last_name %>
+    <%= form.text_field :last_name, required: true, value: @community.last_name %>
+  </div>
+
+  <div>
+    <%= form.label :group, "Group" %>
+    <%= form.select :group, Community::GROUPS, { prompt: "Select a group" }, required: true %>
+  </div>
+
+
+  <div>
+    <%= form.label :description %>
+    <%= form.text_area :description, required: true, value: @community.description %>
+  </div>
+
+  <div>
+    <%= form.label :profile_picture %>
+    <%= form.file_field :profile_picture %>
+    <% if @community.profile_picture.present? %>
+      <p>Current Picture:</p>
+      <%= image_tag @community.profile_picture.url, alt: "Profile Picture", width: 100 %>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.submit "Update Community Member" %>
+  </div>
+<% end %>
+
+<%= link_to "Back to Community Members", communities_path %>

@@ -1,1 +1,23 @@
 // Specific CSS for your home-page
+.swiper-container {
+  width: 400px;
+  height: 400px; /* Adjust height as needed */
+}
+
+.swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swiper-slide img {
+  border-radius: 10px; /* Rounded corners */
+  width: 250px;        /* Adjust the width as needed */
+  height: 350px;       /* Adjust the height as needed */
+  object-fit: cover;   /* Ensures proper scaling of images */
+}
+
+#mobile-menu {
+  top: 100%; /* Position it directly below the button */
+  right: 10px; /* Align it to the left of the button */
+}

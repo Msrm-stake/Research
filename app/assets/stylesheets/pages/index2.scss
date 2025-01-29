@@ -1,0 +1,33 @@
+.filter-dropdown {
+  appearance: none; /* Remove default styling */
+  background-color: #f3ce00; /* Custom background color */
+  color: #1a202c; /* Text color */
+  padding: 10px 20px; /* Padding for the dropdown */
+  border: 2px solid #ffffff; /* Border color */
+  border-radius: 8px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: border-color 0.3s ease; /* Smooth transition for border color */
+  
+}
+
+/* Add a custom arrow */
+.filter-dropdown::after {
+  content: '▼'; /* Custom arrow */
+  position: absolute; /* Position it absolutely */
+  right: 10px; /* Position it to the right */
+  top: 50%; /* Center it vertically */
+  transform: translateY(-50%); /* Adjust for vertical centering */
+  pointer-events: none; /* Prevent interaction with the arrow */
+}
+
+/* Change border color on focus */
+.filter-dropdown:focus {
+  border-color: #f3ce00; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+/* Optional: Add a hover effect */
+.filter-dropdown:hover {
+  border-color: #f3ce00; /* Change border color on hover */
+}

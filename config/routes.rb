@@ -1,12 +1,41 @@
 Rails.application.routes.draw do
+  get 'event_attendances/create'
+  get 'event_attendances/destroy'
   devise_for :users
   root to: "pages#home"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  get '/about_us', to: 'pages#about_us', as: 'about_us'
+  resources :communities
+  resources :articles
+  resources :articles do
+    post 'upload_image', on: :collection
+  end
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  resources :articles do
+    resources :comments, only: [:create]
+  end
+  
+  resources :articles do
+    resources :comments do
+      post 'reply', on: :member
+    end
+  end
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  resources :communities do
+    resources :events
+  end
+
+  resources :communities do
+    resources :events, only: [:index, :show]
+  end
+
+  resources :events do
+    resources :event_attendances, only: [:create, :destroy]
+  end
+
+  resources :events do
+    member do
+      get :attendees  # This maps to the attendees action in the controller
+    end
+  end
+  
 end

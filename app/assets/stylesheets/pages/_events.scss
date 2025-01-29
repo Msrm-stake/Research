@@ -1,0 +1,29 @@
+
+.fc-scrollgrid-liquid {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+
+.fc .fc-toolbar-title {
+  font-size: 20px;
+  font-family: serif;
+}
+
+.fc-col-header {
+  width: 100%;
+  font-family: serif;
+}
+
+.fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+  margin-left: 0.75em;
+
+}
+
+.fc-icon {
+  font-size: 15px !important;
+}
+
+.fc-button {
+  background-color: indigo;
+}

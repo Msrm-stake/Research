@@ -1,0 +1,28 @@
+<li class="border-b sm:text-sm/6 px-3 py-1.5">
+  <strong>
+    <%= comment.user.full_name.presence || "Unknown User" %>
+  </strong>: <%= comment.body %>
+  <br>
+  <small class="text-gray-500">
+    Posted on <%= comment.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+  </small>
+
+  <!-- Reply Button -->
+ 
+
+  <!-- Reply Form (Initially Hidden) -->
+  <div class="reply-form-container" id="reply-form-<%= comment.id %>">
+    <%= form_with model: [comment.article, Comment.new], url: reply_article_comment_path(comment.article, comment), method: :post, local: true do |f| %>
+      <%= f.text_area :body, placeholder: "Write a reply...", class: "mt-2 block w-full border border-gray-300 p-2 rounded" %>
+      <%= f.submit "Reply", class: 'text-gray-900 underline font-bold mt-2' %>
+      <%= hidden_field_tag :parent_comment_id, comment.id %>
+    <% end %>
+  </div>
+
+  <!-- Display Replies (Recursively) -->
+  <% if comment.replies.any? %>
+    <ul style="padding: 5px;">
+      <%= render_comments(comment.replies) %>
+    </ul>
+  <% end %>
+</li>

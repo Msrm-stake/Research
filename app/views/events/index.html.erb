@@ -1,0 +1,143 @@
+<header style="background-color: #f3ce00; height: 200px; position: relative;">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <div class="flex lg:flex-1"></div>
+    <div class="flex lg:hidden">
+      <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+        <span class="sr-only">Open main menu</span>
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+    <div class="hidden lg:flex lg:gap-x-12">
+      <%= link_to 'Home', root_path, class: "text-sm text-gray-900 no-underline font-semibold" %>
+      <% if user_signed_in? && current_user.community.blank? %>
+        <%= link_to 'Join us', new_community_path, class: "text-sm font-semibold text-gray-900 no-underline" %>
+      <% end %>
+      <%= link_to 'All Articles', articles_path, class: "text-sm text-gray-900 no-underline font-semibold" %>
+      <%= link_to 'Our Community', communities_path, class: "text-sm font-semibold text-gray-900 no-underline" %>
+    </div>
+    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+      <div class="relative">
+        <button 
+          id="menu-button" 
+          class="text-sm font-semibold text-gray-900 focus:outline-none"
+          onclick="openMenu()">
+          Members
+        </button>
+        <div 
+          id="menu" 
+          class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden z-10">
+          <% if user_signed_in? %>
+            <% if current_user.community.present? %>
+              <%= link_to 'My Profile', community_path(current_user.community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              <%= link_to 'Edit Profile', edit_community_path(current_user.community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              <%= link_to 'Delete Profile', community_path(current_user.community), 
+                          data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              <%= link_to 'New Event', new_community_event_path(@community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+            <% else %>
+              <%= link_to 'Join us', new_community_path, 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+            <% end %>
+            <%= link_to 'Log out', destroy_user_session_path, 
+                        data: { turbo_method: :delete }, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% else %>
+            <%= link_to 'Log in', new_user_session_path, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="bg-white flex items-center justify-center relative">
+  <div class="absolute flex flex-col items-center z-20">
+    <%= image_tag 'group10.jpg', class: 'rounded-full w-40 h-40 md:w-60 md:h-60 object-cover border-4 border-white', alt: 'Community Photo' %>
+  </div>
+</section>
+
+<div class="bg-white py-12 md:py-20">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 pt-12">
+    <h2 class="text-xl font-semibold text-gray-900 font-serif mb-6 md:text-2xl">Upcoming Events</h2>
+
+    <ol class="mt-6 divide-y divide-gray-100 text-sm">
+      <% @events.each do |event| %>
+        <li class="flex flex-col gap-4 py-6 md:flex-row md:items-start">
+          <% if event.photo.attached? %>
+            <img src="<%= url_for(event.photo) %>" 
+                alt="<%= event.event_name %>" 
+                class="rounded-lg object-cover" style="width: 400px; height: 250px;">
+          <% end %>
+          <div class="flex-auto">
+            <h3 class="font-semibold text-gray-900 text-lg"><%= event.event_name %></h3>
+            <p class="text-sm text-gray-700">Hosted by: <%= @community.first_name %> <%= @community.last_name %></p>
+            <p class="text-gray-900 mt-2 break-words" style="width: 400px; margin-bottom: 10px;"><strong>Description:</strong> <%= event.description %></p>
+            <p class="text-gray-900 mt-1"><i class="fa-solid fa-location-dot"></i> <strong>Location:</strong> <%= event.place %></p>
+            <p class="text-gray-900 mt-1"><i class="fa-regular fa-calendar"></i> <strong>Date:</strong> <%= event.date.strftime("%B %d, %Y at %I:%M %p") %></p>
+            <p class="text-gray-900 mt-1"><i class="fa-solid fa-user-group"></i> <strong>Attendees:</strong> <%= event.attendees.count %></p>
+
+            
+
+            <div class="mt-4 flex gap-4 align-middle">
+              <% if user_signed_in? %>
+                <% if event.event_attendances.exists?(user_id: current_user.id) %>
+                  <%= button_to 'Cancel', 
+                                event_event_attendance_path(event, event.event_attendances.find_by(user_id: current_user.id)), 
+                                method: :delete, class: "bg-green-500 text-white px-4 py-2 rounded-md" %>
+                <% else %>
+                  <%= button_to 'Attend Event', 
+                                event_event_attendances_path(event), 
+                                method: :post, class: "bg-indigo-500 text-white px-3 py-2 rounded-md" %>
+                <% end %>
+              <% else %>
+                <p><%= link_to 'sign in', new_user_session_path, class: "underline text-indigo-900" %> to attend this event.</p>
+              <% end %>
+
+              <%= link_to 'Edit Event', edit_community_event_path(@community, event), 
+                          class: 'text-gray-900 hover:underline' %>
+              <%= link_to 'Delete Event', community_event_path(@community, event), 
+                          method: :delete, 
+                          data: { confirm: 'Are you sure?' }, 
+                          class: 'text-gray-900 hover:underline' %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ol>
+
+  </div>
+</div>
+
+
+
+
+
+<script>
+  function openMenu() {
+    const menu = document.getElementById("menu");
+    const isVisible = menu.classList.contains('hidden');
+    
+    // Toggle menu visibility
+    if (isVisible) {
+      menu.classList.remove('hidden');
+    } else {
+      menu.classList.add('hidden');
+    }
+  }
+
+
+
+
+
+
+</script>
+
+
+
+

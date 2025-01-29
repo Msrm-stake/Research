@@ -1,0 +1,169 @@
+<header style="background-color: #f3ce00; height: 200px; position: relative;">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <div class="flex lg:flex-1">
+      <a href="#" class="-m-1.5 p-1.5 text-gray-900">
+        <span class="sr-only">Your Company</span>
+        <%= link_to 'Rc', root_path, class:"text-2xl font-bold text-gray-900 no-underline" %>
+      </a>
+    </div>
+    <div class="flex lg:hidden">
+      <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+        <span class="sr-only">Open main menu</span>
+        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+    <div class="hidden lg:flex lg:gap-x-12">
+      <% if user_signed_in? && current_user.community.blank? %>
+        <%= link_to 'Join us', new_community_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+      <% end %>
+      <%= link_to 'All Articles', articles_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+      
+      <%= link_to 'Community', communities_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+
+      <a href="#" class="text-sm/6 text-gray-900 no-underline">Company</a>
+    </div>
+    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+      <div class="relative">
+        <!-- Trigger Button -->
+        <button 
+          id="menu-button" 
+          class="text-sm font-semibold text-gray-900 focus:outline-none"
+          onclick="toggleMenu()"
+        >
+          Account
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div 
+          id="menu-dropdown" 
+          class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden"
+        >
+          <%= link_to 'All Members', communities_path, class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% if user_signed_in? %>
+            <!-- Link to Community Show Page -->
+            <% if current_user.community.present? %>
+              <%= link_to 'My Profile', community_path(current_user.community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+
+              <%= link_to 'New Article', new_article_path, class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              
+              <!-- Edit Profile Link -->
+              <%= link_to 'Edit Profile', edit_community_path(current_user.community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+
+              <!-- Delete Profile Link -->
+              <%= link_to 'Delete Profile', community_path(current_user.community), 
+                          data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+            <% else %>
+              <%= link_to 'Join us', new_community_path, class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+            <% end %>
+
+            <!-- Log out Link -->
+            <%= link_to 'Log out', destroy_user_session_path, 
+                        data: { turbo_method: :delete }, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% else %>
+            <!-- Log in Link -->
+            <%= link_to 'Log in', new_user_session_path, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+    
+</header>
+
+<section class="bg-white relative">
+  <div class="absolute left-0" style="margin-top: -120px; padding-left: 70px;">
+    <% if @community.profile_picture.present? %>
+      <%= image_tag @community.profile_picture.url, class: 'rounded-full w-60 h-60 object-cover border-4 border-white', alt: 'Community Photo' %>
+    <% end %>
+  </div>
+</section>
+
+
+<section class="bg-white">
+
+  <div class="bg-white py-24 md:py-20 lg:py-20">
+
+    <div class="mx-auto max-w-7xl gap-20 px-6 lg:px-8">
+      <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-3xl font-serif mt-16"><%= @community.first_name %> <%= @community.last_name %></h2>
+      <p class="mt-6 text-lg/8 text-gray-600 font-serif mb-5"><%= @community.description %></p>
+
+      <div class="mx-auto grid max-w-7xl gap-14 px-6 lg:px-8">
+        <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-3xl font-serif mt-16">My Articles</h2>
+        <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-20 sm:grid-cols-2 lg:grid-cols-3 pl-0">
+          
+          <% if @articles.any? %>
+            <% @articles.each do |article| %>
+              <li class="article-item">
+                <div>
+                  <% if article.photo.attached? %>
+                    <%= image_tag article.photo, class: "aspect-[3/2] w-full rounded-2xl object-cover", size: "200x200" %>
+                  <% else %>
+                    <p>No photo available</p>
+                  <% end %>
+                  <h3 class="mt-6 text-lg/8 font-semibold text-gray-900"><%= article.title %></h3>
+                  <p class="text-base/7 text-gray-600">Status: <%= article.status %></p>
+                  <ul role="list" class="mt-6 flex gap-x-6">
+                    <li>
+                      <%= link_to "View Article", article_path(article), class: 'bg-gray-900 text-white no-underline px-3 py-2 rounded-md hover:text-gray-500' %>
+                    </li>
+                    <% if user_signed_in? && article.user_id == current_user.id %>
+                      <li>
+                        <%= link_to 'Edit', edit_article_path(article), class: 'text-gray-400 hover:text-gray-500' %>
+                      </li>
+                      <li>
+                        <%= link_to 'Delete', article_path(article), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-gray-400 hover:text-gray-500' %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </li>
+            <% end %>
+          <% else %>
+
+          <div>
+            <div>
+              <p>No articles yet</p>
+              <p><%= link_to 'Log in', new_user_session_path, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %> to start a new article</p>
+            </div>
+            <% if current_user && @community.user && current_user.email == @community.user.email %>
+              <div>
+                <%= link_to 'Start a New Article', new_article_path, class: "rounded-md bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600" %>
+              </div>
+            <% end %>
+          </div>
+          
+          <% end %>
+          
+        </ul>
+      </div>
+
+      
+
+    </div>
+    
+  <div class="mx-auto grid max-w-7xl gap-20 px-6 lg:px-8">
+</div>
+
+</section>
+
+
+<script>
+  function toggleMenu() {
+  const menu = document.getElementById('menu-dropdown');
+  if (menu.classList.contains('hidden')) {
+    menu.classList.remove('hidden');
+  } else {
+    menu.classList.add('hidden');
+  }
+}
+</script>
