@@ -19,10 +19,9 @@
         <%= link_to 'Join us', new_community_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
       <% end %>
       <%= link_to 'All Articles', articles_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
-      
       <%= link_to 'Community', communities_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+      <%= link_to 'Next Events', community_events_path(@community), class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
 
-      <a href="#" class="text-sm/6 text-gray-900 no-underline">Company</a>
     </div>
     <div class="hidden lg:flex lg:flex-1 lg:justify-end">
       <div class="relative">

@@ -80,8 +80,13 @@
             <p class="text-gray-900 mt-2 break-words" style="width: 400px; margin-bottom: 10px;"><strong>Description:</strong> <%= event.description %></p>
             <p class="text-gray-900 mt-1"><i class="fa-solid fa-location-dot"></i> <strong>Location:</strong> <%= event.place %></p>
             <p class="text-gray-900 mt-1"><i class="fa-regular fa-calendar"></i> <strong>Date:</strong> <%= event.date.strftime("%B %d, %Y at %I:%M %p") %></p>
-            <p class="text-gray-900 mt-1"><i class="fa-solid fa-user-group"></i> <strong>Attendees:</strong> <%= event.attendees.count %></p>
 
+            <div style="display: flex; gap: 5px; align-items: center">
+              <p class="text-gray-900 mt-1"><i class="fa-solid fa-user-group"></i> <strong>Attendees:</strong> <%= event.attendees.count %></p>
+              <button type="button" class="text-indigo-500 px-3 py-2 rounded-md" onclick="openAttendeesModal(<%= event.id %>)">
+                View Attendees
+              </button>
+            </div>
             
 
             <div class="mt-4 flex gap-4 align-middle">
@@ -105,12 +110,27 @@
                           method: :delete, 
                           data: { confirm: 'Are you sure?' }, 
                           class: 'text-gray-900 hover:underline' %>
+              
+              <!-- Button to open modal showing attendees -->
+              
+            </div>
+
+            <!-- Modal for Attendees -->
+            <div id="attendees-modal-<%= event.id %>" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+              <div class="bg-white p-4 rounded-lg w-1/3">
+                <h3 class="text-lg font-semibold">Attendees for <%= event.event_name %></h3>
+                <ul class="mt-4">
+                  <% event.attendees.each do |attendee| %>
+                    <li class="text-gray-800"><%= attendee.full_name %></li>
+                  <% end %>
+                </ul>
+                <button onclick="closeAttendeesModal(<%= event.id %>)" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md">Close</button>
+              </div>
             </div>
           </div>
         </li>
       <% end %>
     </ol>
-
   </div>
 </div>
 
@@ -133,7 +153,17 @@
 
 
 
+// Function to open the modal
+function openAttendeesModal(eventId) {
+  const modal = document.getElementById(`attendees-modal-${eventId}`);
+  modal.classList.remove('hidden');
+}
 
+// Function to close the modal
+function closeAttendeesModal(eventId) {
+  const modal = document.getElementById(`attendees-modal-${eventId}`);
+  modal.classList.add('hidden');
+}
 
 
 </script>
