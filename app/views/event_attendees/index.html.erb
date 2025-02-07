@@ -1,0 +1,135 @@
+<div class="bg-white min-h-screen">
+  <!-- Header -->
+  <header class="h-20 shadow-md" style="background-color: #f3ce00;">
+    <nav class="mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-8 h-full">
+      <div class="flex lg:flex-1"></div>
+
+      <!-- Mobile Menu Button -->
+      <div class="lg:hidden">
+        <button type="button" class="-m-2.5 p-2.5 rounded-md text-gray-700">
+          <span class="sr-only">Open main menu</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="hidden lg:flex lg:gap-x-12">
+        <%= link_to 'Home', root_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+        <% if user_signed_in? && current_user.community.blank? %>
+          <%= link_to 'Join us', new_community_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+        <% end %>
+        <%= link_to 'All Articles', articles_path, class: "text-sm text-gray-900 font-semibold hover:text-gray-700" %>
+        <%= link_to 'Our Community', communities_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+        <%= link_to "Events", events_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+      </div>
+
+      <!-- Members Dropdown -->
+      <div class="hidden lg:flex lg:flex-1 lg:justify-end relative">
+        <button id="menu-button" class="text-sm font-semibold text-gray-900 focus:outline-none" onclick="toggleMenu()">
+          Members
+        </button>
+        <div id="menu" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden z-10">
+          <% if user_signed_in? %>
+            <% if current_user.community.present? %>
+              <%= link_to 'My Profile', community_path(current_user.community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              <%= link_to 'Edit Profile', edit_community_path(current_user.community), 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              <%= link_to 'Delete Profile', community_path(current_user.community), 
+                          data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+              <button id="openModal" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                New Event
+              </button>
+            <% else %>
+              <%= link_to 'Join us', new_community_path, 
+                          class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+            <% end %>
+            <%= link_to 'Log out', destroy_user_session_path, 
+                        data: { turbo_method: :delete }, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% else %>
+            <%= link_to 'Log in', new_user_session_path, 
+                        class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' %>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <div class="w-full max-w-4xl bg-white p-6 shadow-md rounded-lg">
+      <!-- Event Heading -->
+      <div class="flex flex-col sm:flex-row items-center gap-4">
+        <% if @event.photo? %>
+          <img class="rounded-lg object-cover" style="width: 300px; height: 200px;" src="<%= @event.photo.url %>" alt="<%= @event.name %>">
+        <% end %>
+        <div class="sm:flex-auto">
+          <h1 class="text-xl font-semibold text-gray-900 font-serif">Attendees for <%= @event.name %></h1>
+          <p class="mt-2 text-sm text-gray-700">A list of all attendees for this event.</p>
+        </div>
+      </div>
+
+      <!-- Attendees Table -->
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+  <% emails = [] %> <!-- Store all emails for the invite all button -->
+  <% @attendees.each do |attendee| %>
+    <% emails << attendee.email %> 
+    <div class="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-xl transition">
+      <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0">
+          <div class="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
+            <span class="text-lg font-bold text-gray-700">
+              <%= attendee.first_name[0] %><%= attendee.last_name[0] %>
+            </span>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-gray-900"><%= attendee.first_name %> <%= attendee.last_name %></h3>
+          <p class="text-sm text-gray-600"><%= attendee.email %></p>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-between">
+        <%= link_to 'Invite', "mailto:#{attendee.email}", 
+            class: "hover:bg-yellow-500 text-white font-medium py-2 px-6 rounded-full text-sm shadow-md transition", style:"background-color: #f3ce00;" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Invite All Button -->
+<% if emails.any? %>
+  <div class="mt-8 text-center">
+    <%= link_to 'Invite All Attendees', "mailto:#{emails.join(',')}", 
+        class: "hover:bg-yellow-500 text-white font-medium py-2 px-6 rounded-full shadow-lg transition text-sm", style:"background-color: #f3ce00;" %>
+  </div>
+<% end %>
+
+
+          </div>
+        </div>
+      </div>
+
+<!-- JavaScript for Dropdown -->
+<script>
+  function toggleMenu() {
+    document.getElementById("menu").classList.toggle("hidden");
+  }
+
+  document.addEventListener("click", function(event) {
+    let menu = document.getElementById("menu");
+    let button = document.getElementById("menu-button");
+
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+      menu.classList.add("hidden");
+    }
+  });
+</script>
+
+
+
+
+

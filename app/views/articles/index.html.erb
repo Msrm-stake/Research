@@ -1,10 +1,7 @@
 <header style="background-color: #f3ce00; height: 200px; position: relative;">
   <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
     <div class="flex lg:flex-1">
-      <%# <a href="#" class="-m-1.5 p-1.5 text-gray-900">
-        <span class="sr-only">Your Company</span>
-        <%= link_to 'Rc', root_path, class:"text-2xl font-bold text-gray-900 no-underline" %>
-      <%# </a>  %>
+
     </div>
     <div class="flex lg:hidden">
       <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
@@ -15,22 +12,22 @@
       </button>
     </div>
     <div class="hidden lg:flex lg:gap-x-12">
-      <%= link_to 'Home', root_path, class: "text-sm/6 text-gray-900 no-underline font-semibold" %>
+      <%= link_to 'Home', root_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
       <% if user_signed_in? && current_user.community.blank? %>
-        <%= link_to 'Join us', new_community_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+        <%= link_to 'Join us', new_community_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
       <% end %>
-      <%= link_to 'Community', communities_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
-      
+      <%= link_to 'Community', communities_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+      <%= link_to "Events", events_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
     </div>
     <div class="hidden lg:flex lg:flex-1 lg:justify-end">
       <div class="relative">
         <!-- Trigger Button -->
         <button 
           id="menu-button" 
-          class="text-sm font-semibold text-gray-900 focus:outline-none"
+          class="text-md font-semibold text-gray-900 no-underline font-arial"
           onclick="toggleMenu()"
         >
-          My Profil
+          Members
         </button>
 
         <!-- Dropdown Menu -->
@@ -74,9 +71,9 @@
     
 </header>
 
-<section class="bg-white relative">
-  <div class="absolute left-0" style="margin-top: -120px; padding-left: 70px;">
-    <%= image_tag 'group6.jpg', class: 'rounded-full w-60 h-60 object-cover border-4 border-white', alt: 'Community Photo' %>
+<section class="bg-white flex items-center justify-center relative">
+  <div class="absolute flex flex-col items-center">
+    <%= image_tag 'group6.jpg', class: 'rounded-full w-40 h-40 md:w-60 md:h-60 object-cover border-4 border-white', alt: 'Community Photo' %>
   </div>
 </section>
 
@@ -93,11 +90,15 @@
       <p class="mt-6 text-lg/8 text-gray-600 font-serif mb-5">Explore the vibrant communities we have and connect with like-minded individuals.</p>
       
       <div class="mb-10 flex justify-center">
-        <select id="group-filter" class="filter-dropdown">
-          <option value="all">All Articles</option>
-          <option value="complete">Complete</option>
-          <option value="incomplete">Incomplete</option>
-        </select>
+        <div class="relative w-full max-w-xs">
+          <select id="group-filter" 
+                  class="text-gray-900 text-sm font-medium rounded-full px-4 py-2 shadow-md focus:ring-2 focus:ring-white focus:outline-none transition hover:bg-yellow-500 cursor-pointer appearance-none"
+                  style="background-color: #f3ce00; width: 300px;">
+            <option class="bg-white text-gray-900" value="all">All Articles</option>
+            <option class="bg-white text-gray-900" value="complete">Complete</option>
+            <option class="bg-white text-gray-900" value="incomplete">Incomplete</option>
+          </select>
+        </div>
       </div>
 
       <div class="mx-auto grid max-w-7xl gap-20 px-6 lg:px-8">

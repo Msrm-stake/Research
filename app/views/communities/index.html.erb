@@ -11,22 +11,22 @@
       </button>
     </div>
     <div class="hidden lg:flex lg:gap-x-12">
-      <%= link_to 'Home', root_path, class: "text-sm/6 text-gray-900 no-underline font-semibold" %>
+      <%= link_to 'Home', root_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
       <% if user_signed_in? && current_user.community.blank? %>
-        <%= link_to 'Join us', new_community_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+        <%= link_to 'Join us', new_community_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
       <% end %>
-      <%= link_to 'All Articles', articles_path, class: "text-sm/6 text-gray-900 no-underline font-semibold" %>
-      
+      <%= link_to 'All Articles', articles_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+      <%= link_to "Events", events_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
     </div>
     <div class="hidden lg:flex lg:flex-1 lg:justify-end">
       <div class="relative">
               <!-- Trigger Button -->
               <button 
                 id="menu-button" 
-                class="text-sm font-semibold text-gray-900 focus:outline-none"
+                class="text-md font-semibold text-gray-900 no-underline font-arial"
                 onclick="toggleMenu()"
               >
-                My account
+                Members
               </button>
 
               <!-- Dropdown Menu -->
@@ -69,9 +69,9 @@
     
 </header>
 
-<section class="bg-white relative">
-  <div class="absolute left-0" style="margin-top: -120px; padding-left: 70px;">
-  <%= image_tag 'group3.jpg', class: 'rounded-full w-60 h-60 object-cover border-4 border-white', alt: 'Community Photo', sizes: '60x60' %>
+<section class="bg-white flex items-center justify-center relative">
+  <div class="absolute flex flex-col items-center">
+  <%= image_tag 'group3.jpg', class: 'rounded-full w-40 h-40 md:w-60 md:h-60 object-cover border-4 border-white', alt: 'Community Photo'%>
 </div>
 
 
@@ -87,11 +87,13 @@
 By participating in a disciplined, joint inquiry process, which we call Research-in-Action we aim to influence conversations across fields—scholarly and professional—while always centering the everyday experiences of practitioners.</p>
     
     <div class="mb-10 flex justify-center">
-      <select id="group-filter" class="filter-dropdown">
-        <option value="all">All Members</option>
-        <option value="Research fellows">Research Fellows</option>
-        <option value="Researchers">Researchers</option>
-        <option value="Faculty & convening">Faculty & Convening</option>
+      <select id="group-filter" 
+        class="w-full text-gray-900 text-sm font-medium rounded-full px-4 py-2 shadow-md focus:ring-2 focus:ring-white focus:outline-none transition hover:bg-yellow-500 cursor-pointer appearance-none"
+                  style="background-color: #f3ce00; width: 300px;">
+        <option class="bg-white text-gray-900" value="all">All Members</option>
+        <option class="bg-white text-gray-900" value="Research fellows">Research Fellows</option>
+        <option class="bg-white text-gray-900" value="Researchers">Researchers</option>
+        <option class="bg-white text-gray-900" value="Faculty & convening">Faculty & Convening</option>
       </select>
     </div>
   </div>
@@ -154,13 +156,23 @@ By participating in a disciplined, joint inquiry process, which we call Research
     filterSelect.dispatchEvent(new Event('change'));
 });
 
+
+// members
+
+
 function toggleMenu() {
-  const menu = document.getElementById('menu-dropdown');
-  if (menu.classList.contains('hidden')) {
-    menu.classList.remove('hidden');
-  } else {
-    menu.classList.add('hidden');
+    let menu = document.getElementById("menu-dropdown");
+    menu.classList.toggle("hidden");
   }
-}
+
+  document.addEventListener("click", function(event) {
+    let menu = document.getElementById("menu-dropdown");
+    let button = document.getElementById("menu-button");
+
+    // Close the dropdown if clicking outside of it
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+      menu.classList.add("hidden");
+    }
+  });
 
 </script>

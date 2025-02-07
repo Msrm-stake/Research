@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  get 'events/index'
+  get 'events/show'
+  get 'events/new'
+  get 'events/create'
+  get 'events/edit'
+  get 'events/update'
+  get 'events/destroy'
+  get 'events/attend'
+  get 'events/attendees'
   get 'event_attendances/create'
   get 'event_attendances/destroy'
   devise_for :users
@@ -20,22 +29,28 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :events
+
+  
   resources :communities do
     resources :events
   end
 
-  resources :communities do
-    resources :events, only: [:index, :show]
-  end
-
-  resources :events do
-    resources :event_attendances, only: [:create, :destroy]
-  end
-
   resources :events do
     member do
-      get :attendees  # This maps to the attendees action in the controller
+      post :attend
+      delete :leave
     end
+  end
+
+  resources :events do
+    resources :event_attendees, only: [:index, :create, :destroy] do
+      post 'invite', on: :member # This creates the route for inviting a specific attendee
+    end
+  end
+
+  resources :events do
+    resources :event_attendees, only: [:index] # This will create the route for viewing attendees
   end
   
 end

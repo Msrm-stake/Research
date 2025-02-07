@@ -5,7 +5,7 @@
         <nav class="flex items-center justify-between lg:justify-start" aria-label="Global">
           <a href="#" class="-m-1.5 p-1.5 text-gray-900">
             <span class="sr-only">Your Company</span>
-            <h1 class="text-gray-900">Rc</h1>
+            <h1 class="text-gray-900 text-2xl font-bold">Rc</h1>
           </a>
           <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700 lg:hidden">
             <span class="sr-only">Open main menu</span>
@@ -14,16 +14,17 @@
             </svg>
           </button>
           <div class="hidden lg:ml-12 lg:flex lg:gap-x-8">
-            <%= link_to 'Our Community', communities_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
-            <%= link_to 'Our Research', articles_path, class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
-            <%= link_to 'View Events', community_events_path(@community), class: "text-sm/6 font-semibold text-gray-900 no-underline" %>
+            <%= link_to 'Community', communities_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+            <%= link_to 'Research', articles_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+            <%= link_to "Events", events_path, class: "text-md font-semibold text-gray-900 no-underline font-arial" %>
+
 
             <%# <a href="#" class="text-sm/6 text-gray-900 no-underline">What’s happening</a> %>
             <div class="relative">
               <!-- Trigger Button -->
               <button 
                 id="menu-button" 
-                class="text-sm font-semibold text-gray-900 focus:outline-none"
+                class="text-md font-semibold text-gray-900 focus:outline-none"
                 onclick="toggleMenu()"
               >
                 Members
@@ -230,13 +231,19 @@ By participating in a disciplined, joint inquiry process, which we call Research
 
 
   function toggleMenu() {
-  const menu = document.getElementById('menu-dropdown');
-  if (menu.classList.contains('hidden')) {
-    menu.classList.remove('hidden');
-  } else {
-    menu.classList.add('hidden');
+    let menu = document.getElementById("menu-dropdown");
+    menu.classList.toggle("hidden");
   }
-}
+
+  document.addEventListener("click", function(event) {
+    let menu = document.getElementById("menu-dropdown");
+    let button = document.getElementById("menu-button");
+
+    // Close the dropdown if clicking outside of it
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+      menu.classList.add("hidden");
+    }
+  });
 
 // Mobile Menue
 
